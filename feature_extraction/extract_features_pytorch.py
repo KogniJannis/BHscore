@@ -2,7 +2,7 @@ import os
 
 from PIL import Image
 import numpy as np
-from scipy.misc import imresize
+from skimage.transform import resize
 from scipy.io import savemat
 import torch
 from torch.utils.data import Dataset, DataLoader
@@ -14,7 +14,7 @@ from torchvision import transforms
 # create your model here!
 # Example
 from torchvision.models import resnet18
-model = resnet18.resnet18(pretrained=True)
+model = resnet18(pretrained=True)
 
 # if you use custom transformer for preprocessing, define it.
 transform = transforms.Compose([
@@ -47,7 +47,7 @@ class ImageNetDataset(Dataset):
         path = os.path.join(self.image_dir, self.images[idx])
         image = Image.open(path)
         image = np.asarray(image)
-        image = imresize(image, (224, 224), interp='bicubic')
+        image = resize(image, (224, 224), order=3)
         if len(image.shape) == 2:
             image = image[:, :, np.newaxis].repeat(3, axis=2)
         image = image.transpose(2, 0, 1)
@@ -65,7 +65,8 @@ def extract_features(image_dir, model, mean_image, output_dir, transform, layers
     layers = list(dict(model.named_children()).keys())
 
     dataset = ImageNetDataset(image_dir, transform)
-    dataloader = DataLoader(dataset, batch_size=32,
+    print(f"loaded dataset of length {len(dataset)}.")
+    dataloader = DataLoader(dataset, batch_size=1,
                             shuffle=False, num_workers=4)
 
     if use_gpu is True and torch.cuda.is_avairable():
@@ -90,6 +91,7 @@ def extract_features(image_dir, model, mean_image, output_dir, transform, layers
             features = []
             image_names = []
             for imnames, images in dataloader:
+                output = model(images)
                 _model_feats = []
                 features.append(_model_feats[0])
                 image_names.extend(imnames)
