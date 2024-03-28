@@ -91,8 +91,8 @@ def extract_features(image_dir, model, output_dir, transform, layers=None, use_g
             features = []
             image_names = []
             for imnames, images in dataloader:
-                output = model(images)
                 _model_feats = []
+                output = model(images)
                 features.append(_model_feats[0])
                 image_names.extend(imnames)
 
