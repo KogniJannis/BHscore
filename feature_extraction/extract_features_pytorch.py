@@ -58,7 +58,7 @@ class ImageNetDataset(Dataset):
         return self.images[idx], image
 
 
-def extract_features(image_dir, model, mean_image, output_dir, transform, layers=None, use_gpu=False):
+def extract_features(image_dir, model, output_dir, transform, layers=None, use_gpu=False):
     # automatically list up all layers (blocks)
     # if you want to get activation within each blocks, specify layer names by your self, for example
     # layers = [block1.conv1, block1.relu1, ...]
