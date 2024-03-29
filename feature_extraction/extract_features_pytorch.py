@@ -65,8 +65,7 @@ def extract_features(image_dir, model, output_dir, transform, layers=None, use_g
     layers = list(dict(model.named_children()).keys())
 
     dataset = ImageNetDataset(image_dir, transform)
-    print(f"loaded dataset of length {len(dataset)}.")
-    dataloader = DataLoader(dataset, batch_size=1,
+    dataloader = DataLoader(dataset, batch_size=32,
                             shuffle=False, num_workers=4)
 
     if use_gpu is True and torch.cuda.is_avairable():
